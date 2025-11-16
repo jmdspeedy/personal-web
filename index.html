@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>James Wu | Software Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=mona-sans:400,500,600,700,800,900" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-bg': '#1A1A1A',
+              'brand-text': '#f4f4ed',
+              'brand-primary': '#d2ff00',
+              'brand-dark': '#101400',
+              'brand-card': '#282828',
+            },
+            fontFamily: {
+              sans: ['Mona Sans', 'sans-serif'],
+            },
+            animation: {
+              'infinite-scroll': 'infinite-scroll 25s linear infinite',
+            },
+            keyframes: {
+              'infinite-scroll': {
+                '0%': { transform: 'translateX(0)' },
+                '100%': { transform: 'translateX(-50%)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Mona Sans', sans-serif;
+      }
+      section[id] {
+        scroll-margin-top: 80px;
+      }
+      .gradient-text {
+        background: linear-gradient(to right, #f4f4ed, #d2ff00);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .timeline-marker::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: -4.5px;
+        transform: translateY(-50%);
+        width: 9px;
+        height: 9px;
+        border-radius: 9999px;
+        background-color: #d2ff00;
+        border: 2px solid #1A1A1A;
+      }
+
+      /* Animation for Hero Name */
+      @keyframes bg-slide {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+      }
+      @keyframes text-fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes pulse-glow {
+        from {
+          box-shadow: 0 0 25px rgba(210, 255, 0, 0.7), 0 0 40px rgba(210, 255, 0, 0.5);
+        }
+        to {
+          box-shadow: 0 0 50px rgba(210, 255, 0, 1), 0 0 75px rgba(210, 255, 0, 0.7);
+        }
+      }
+
+      .name-highlight-anim {
+        display: inline-block;
+        position: relative;
+      }
+      .name-highlight-anim::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #d2ff00; /* brand-primary */
+        transform-origin: left;
+        animation: bg-slide 0.8s cubic-bezier(0.7, 0, 0.3, 1) forwards,
+                   pulse-glow 2s ease-in-out 0.8s infinite alternate;
+      }
+      .name-text-anim {
+        position: relative; /* to ensure it's on top of the ::before pseudo-element */
+        opacity: 0;
+        animation: text-fade-in 0.5s ease forwards 0.4s; /* delayed start */
+      }
+      
+      /* Polaroid Style */
+      .polaroid-frame {
+        background-color: #f4f4ed; /* brand-text */
+        padding: 1rem;
+        padding-bottom: 4rem;
+        border-radius: 4px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+        transform: rotate(-3deg);
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        display: inline-block; /* to make it wrap the image */
+        position: relative; /* For caption positioning */
+      }
+      .polaroid-frame:hover {
+        transform: rotate(0deg) scale(1.05);
+        box-shadow: 0 15px 30px rgba(210, 255, 0, 0.2), 0 10px 10px rgba(210, 255, 0, 0.1);
+      }
+      .polaroid-frame img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 1px solid rgba(0,0,0,0.1);
+      }
+      .polaroid-caption {
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        right: 1rem;
+        text-align: center;
+        font-family: 'Caveat', cursive;
+        font-size: 1.5rem;
+        color: #1A1A1A; /* brand-bg */
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
+  }
+}
+</script>
+</head>
+  <body class="bg-brand-bg text-brand-text antialiased selection:bg-brand-primary selection:text-brand-dark">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
