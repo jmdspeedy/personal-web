@@ -29,3 +29,5 @@ For those interested in the code, here’s a quick look at the technologies I us
 -   **No build step needed!** It's all vanilla JS/TS and runs directly in the browser, keeping things simple and fast.
 
 Thanks for stopping by!
+
+(BTW, I ABSOLUTELY VIBE CODED THIS ENTIRE THING)
