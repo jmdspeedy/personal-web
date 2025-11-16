@@ -4,6 +4,7 @@ export interface PersonalInfo {
   name: string;
   role: string;
   bio: string;
+  avatarUrl: string;
 }
 
 export interface Education {

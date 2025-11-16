@@ -4,7 +4,8 @@ import { CodeIcon } from './components/Icons';
 export const personalInfo: PersonalInfo = {
   name: "James Wu",
   role: "Software Developer",
-  bio: "Hi, I’m James Wu, I am currently residing in Japan. I am a multilingual IT professional with a background in Computer Science (Cybersecurity) from the University of Queensland. I’m passionate about bridging technology and people—whether that means troubleshooting complex systems, building intuitive applications, or helping global teams communicate effectively.\n\nMy experience spans from cybersecurity analysis and IT support to application development and network management, combining technical precision with creative problem-solving. Fluent in English, Chinese, and Japanese, I enjoy working in cross-cultural environments and continuously learning new tools that make technology more secure, efficient, and human-centered."
+  bio: "Hi, I’m James Wu, I am currently residing in Japan. I am a multilingual IT professional with a background in Computer Science (Cybersecurity) from the University of Queensland. I’m passionate about bridging technology and people—whether that means troubleshooting complex systems, building intuitive applications, or helping global teams communicate effectively.\n\nMy experience spans from cybersecurity analysis and IT support to application development and network management, combining technical precision with creative problem-solving. Fluent in English, Chinese, and Japanese, I enjoy working in cross-cultural environments and continuously learning new tools that make technology more secure, efficient, and human-centered.",
+  avatarUrl: "https://i.imgur.com/4guhfnE.png"
 };
 
 export const educationData: Education[] = [
@@ -46,7 +47,7 @@ export const projects: Project[] = [
     title: "SuiReader",
     description: "An Android mobile application that helps users check and manage their Japanese IC card balance and history using NFC. Designed with a minimalist, Wallet-inspired UI.",
     tags: ["Kotlin", "Java", "Mobile Dev", "Figma"],
-    imageUrl: "https://picsum.photos/seed/ecommerce/800/600",
+    imageUrl: "https://i.imgur.com/Vfgk6Hu.png",
     link: "#"
   },
   {

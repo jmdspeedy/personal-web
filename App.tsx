@@ -309,7 +309,7 @@ const AboutSection = React.forwardRef<HTMLElement>((props, fwdRef) => {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-x-16 gap-y-12 items-center">
             <div className={`md:col-span-2 flex justify-center md:justify-start transition-all duration-700 ease-in-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`} style={{ transitionDelay: '300ms' }}>
                 <div className="polaroid-frame max-w-sm">
-                    <img src="https://cdn.discordapp.com/attachments/990856720777617513/1439533851973255178/IMG_7245.png?ex=691adddf&is=69198c5f&hm=3d9bf36a2c59c230864ab935f086ea1ccf17db82f878bef9dc1fce449dfe7818" alt="A portrait of James Wu" />
+                    <img src={personalInfo.avatarUrl} alt="A portrait of James Wu" />
                     <p className="polaroid-caption">{uiTexts.aboutSection.polaroidCaption}</p>
                 </div>
             </div>
