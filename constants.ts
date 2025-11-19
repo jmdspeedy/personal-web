@@ -1,9 +1,10 @@
+
 import type { Project, PersonalInfo, Education, Experience, Skill, Contact, UITexts } from './types';
 import { CodeIcon } from './components/Icons';
 
 export const personalInfo: PersonalInfo = {
   name: "James Wu",
-  role: "Software Developer",
+  role: "Bridging Technology & People, Across Cultures.",
   bio: "Hi, I’m James Wu, I am currently residing in Japan. I am a multilingual IT professional with a background in Computer Science (Cybersecurity) from the University of Queensland. I’m passionate about bridging technology and people—whether that means troubleshooting complex systems, building intuitive applications, or helping global teams communicate effectively.\n\nMy experience spans from cybersecurity analysis and IT support to application development and network management, combining technical precision with creative problem-solving. Fluent in English, Chinese, and Japanese, I enjoy working in cross-cultural environments and continuously learning new tools that make technology more secure, efficient, and human-centered.",
   avatarUrl: "https://i.imgur.com/4guhfnE.png"
 };
@@ -47,7 +48,7 @@ export const projects: Project[] = [
     title: "SuiReader",
     description: "An Android mobile application that helps users check and manage their Japanese IC card balance and history using NFC. Designed with a minimalist, Wallet-inspired UI.",
     tags: ["Kotlin", "Java", "Mobile Dev", "Figma"],
-    imageUrl: "https://i.imgur.com/Vfgk6Hu.png",
+    imageUrl: "https://i.imgur.com/GGUmerD.png",
     link: "#"
   },
   {
@@ -77,6 +78,7 @@ export const skills: Skill[] = [
   { name: "Kotlin", icon: CodeIcon },
   { name: "Python", icon: CodeIcon },
   { name: "C", icon: CodeIcon },
+  { name: "C#", icon: CodeIcon },
   { name: "Java", icon: CodeIcon },
   { name: "TypeScript", icon: CodeIcon },
   { name: "JavaScript", icon: CodeIcon },
@@ -117,8 +119,8 @@ export const uiTexts: UITexts = {
     title: 'Featured Projects',
   },
   contactSection: {
-    title: 'Get In Touch',
-    paragraph: "I'm currently seeking new opportunities and am open to collaboration. Whether you have a question or just want to say hi, feel free to reach out. Let's create something amazing together!",
+    title: "LET'S WORK TOGETHER",
+    paragraph: "Currently open for freelance opportunities and interesting collaborations. Drop a line if you want to build something neon.",
   },
   footer: {
     copyrightText: 'Designed & Built with Passion.',

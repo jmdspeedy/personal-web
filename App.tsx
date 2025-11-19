@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect, useRef } from 'react';
 import { personalInfo, experiences, educationData, projects, skills, contact, uiTexts } from './constants';
 import type { Project, TimelineItemData } from './types';
@@ -49,52 +48,191 @@ const AnimatedBackground: React.FC<{ isVisible: boolean }> = ({ isVisible }) => 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    // Configuration
+    const spacing = 45; // Slightly tighter grid
+    const connectionRadius = 120; // Mouse connection radius
+    const pulseCount = 12; 
+    const brandColor = { r: 210, g: 255, b: 0 }; // #d2ff00
+    
+    // State
+    let mouse = { x: -1000, y: -1000 };
+    let ripples: { x: number; y: number; radius: number; alpha: number; speed: number }[] = [];
+    
+    interface Pulse {
+        x: number; // Grid index X
+        y: number; // Grid index Y
+        dx: number; // Direction X
+        dy: number; // Direction Y
+        progress: number; 
+        speed: number;
+        life: number; 
+    }
+
+    let pulses: Pulse[] = [];
 
     const resize = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
     };
 
+    const createPulse = (): Pulse => {
+        const gx = Math.floor(Math.random() * (width / spacing));
+        const gy = Math.floor(Math.random() * (height / spacing));
+        const dir = Math.floor(Math.random() * 4);
+        let dx = 0, dy = 0;
+        if (dir === 0) dy = -1;
+        else if (dir === 1) dx = 1;
+        else if (dir === 2) dy = 1;
+        else dx = -1;
+
+        return {
+            x: gx,
+            y: gy,
+            dx,
+            dy,
+            progress: 0,
+            speed: 0.04 + Math.random() * 0.06,
+            life: 1.0,
+        };
+    };
+
+    for(let i = 0; i < pulseCount; i++) {
+        pulses.push(createPulse());
+    }
+
     window.addEventListener('resize', resize);
     
-    let mouse = { x: width / 2, y: height / 2 };
     const mouseMove = (e: MouseEvent) => {
         mouse.x = e.clientX;
         mouse.y = e.clientY;
     };
     window.addEventListener('mousemove', mouseMove);
 
-    const dots: { x: number; y: number; size: number; baseSize: number; }[] = [];
-    const spacing = 40;
-    const baseSize = 1.2;
-
-    for (let x = spacing / 2; x < width; x += spacing) {
-      for (let y = spacing / 2; y < height; y += spacing) {
-        dots.push({ x, y, size: baseSize, baseSize });
-      }
-    }
+    const handleClick = (e: MouseEvent) => {
+      ripples.push({
+        x: e.clientX,
+        y: e.clientY,
+        radius: 0,
+        alpha: 1,
+        speed: 8
+      });
+    };
+    window.addEventListener('mousedown', handleClick);
 
     const animate = () => {
       ctx.clearRect(0, 0, width, height);
+      
+      const cols = Math.ceil(width / spacing);
+      const rows = Math.ceil(height / spacing);
 
-      dots.forEach(dot => {
-        const dist = Math.sqrt(Math.pow(mouse.x - dot.x, 2) + Math.pow(mouse.y - dot.y, 2));
+      // 1. Update and Draw Ripples (Sonar Effect)
+      for (let i = ripples.length - 1; i >= 0; i--) {
+        const r = ripples[i];
+        r.radius += r.speed;
+        r.alpha -= 0.015;
+        
+        // Draw the actual ring
+        ctx.beginPath();
+        ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${brandColor.r}, ${brandColor.g}, ${brandColor.b}, ${r.alpha * 0.3})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
-        let targetSize = dot.baseSize;
-        if (dist < 200) {
-            targetSize = (1 - (dist / 200)) * 4 + dot.baseSize;
+        if (r.alpha <= 0) {
+          ripples.splice(i, 1);
+        }
+      }
+
+      // 2. Draw Grid Dots & Connections
+      for (let i = 0; i <= cols; i++) {
+        for (let j = 0; j <= rows; j++) {
+            const x = i * spacing;
+            const y = j * spacing;
+
+            // Calculate distances
+            const distMouse = Math.hypot(mouse.x - x, mouse.y - y);
+            
+            // Check ripple intersections
+            let rippleInfluence = 0;
+            ripples.forEach(r => {
+              const distRipple = Math.abs(Math.hypot(r.x - x, r.y - y) - r.radius);
+              if (distRipple < 50) { // If dot is near the ripple ring
+                 rippleInfluence += (1 - distRipple / 50) * r.alpha;
+              }
+            });
+
+            // Base dot style
+            let dotSize = 1;
+            let dotAlpha = 0.1; 
+            let dotColor = `255, 255, 255`;
+
+            // MOUSE INTERACTION: Flashlight Only (Removed Line Connections)
+            if (distMouse < connectionRadius) {
+                const strength = 1 - distMouse / connectionRadius;
+                dotAlpha = 0.2 + (strength * 0.8);
+                dotSize = 1 + (strength * 1.5);
+                dotColor = `${brandColor.r}, ${brandColor.g}, ${brandColor.b}`;
+            }
+
+            // RIPPLE INTERACTION: Glow up
+            if (rippleInfluence > 0) {
+                dotAlpha = Math.max(dotAlpha, rippleInfluence);
+                dotSize = Math.max(dotSize, 1 + rippleInfluence * 3);
+                dotColor = `${brandColor.r}, ${brandColor.g}, ${brandColor.b}`;
+            }
+
+            ctx.beginPath();
+            ctx.arc(x, y, dotSize, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(${dotColor}, ${dotAlpha})`;
+            ctx.fill();
+        }
+      }
+
+      // 3. Update and Draw Circuit Pulses (Data Packets)
+      pulses.forEach((p, index) => {
+        if (p.life <= 0) {
+            pulses[index] = createPulse();
+            return;
         }
 
-        dot.size += (targetSize - dot.size) * 0.1;
+        p.progress += p.speed;
+        if (p.progress >= 1) {
+            p.x += p.dx;
+            p.y += p.dy;
+            p.progress = 0;
+            
+            // Turn randomly
+            if (Math.random() < 0.3) {
+                if (p.dx !== 0) { p.dx = 0; p.dy = Math.random() > 0.5 ? 1 : -1; } 
+                else { p.dy = 0; p.dx = Math.random() > 0.5 ? 1 : -1; }
+            }
+            
+            p.life -= 0.005;
+            if (p.x < 0 || p.x > cols || p.y < 0 || p.y > rows) p.life = 0;
+        }
+
+        const currentX = (p.x + p.dx * p.progress) * spacing;
+        const currentY = (p.y + p.dy * p.progress) * spacing;
         
-        const opacity = Math.max(0.1, Math.min(0.5, 1 - dist / 600));
-        
+        // Draw Trail
+        const tailLength = 25 * p.speed; 
+        const tailX = currentX - (p.dx * spacing * tailLength);
+        const tailY = currentY - (p.dy * spacing * tailLength);
+
+        const gradient = ctx.createLinearGradient(tailX, tailY, currentX, currentY);
+        gradient.addColorStop(0, `rgba(${brandColor.r}, ${brandColor.g}, ${brandColor.b}, 0)`);
+        gradient.addColorStop(1, `rgba(${brandColor.r}, ${brandColor.g}, ${brandColor.b}, ${p.life * 0.8})`);
+
+        ctx.lineWidth = 2;
+        ctx.lineCap = 'square'; // Tech feel
+        ctx.strokeStyle = gradient;
         ctx.beginPath();
-        ctx.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(210, 255, 0, ${opacity})`;
-        ctx.fill();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(currentX, currentY);
+        ctx.stroke();
       });
 
       animationFrameId.current = requestAnimationFrame(animate);
@@ -103,17 +241,16 @@ const AnimatedBackground: React.FC<{ isVisible: boolean }> = ({ isVisible }) => 
     animate();
 
     return () => {
-      if(animationFrameId.current) {
-        cancelAnimationFrame(animationFrameId.current);
-      }
+      if(animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
       window.removeEventListener('resize', resize);
       window.removeEventListener('mousemove', mouseMove);
+      window.removeEventListener('mousedown', handleClick);
     };
   }, []);
 
   return <canvas 
     ref={canvasRef} 
-    className={`fixed top-0 left-0 w-full h-full -z-10 transition-all duration-500 ${!isVisible ? 'blur-sm' : 'blur-none'}`} 
+    className={`fixed top-0 left-0 w-full h-full -z-10 transition-all duration-1000 ${!isVisible ? 'opacity-20 blur-sm' : 'opacity-100 blur-none'}`} 
   />;
 };
 
@@ -167,16 +304,16 @@ const Header: React.FC = () => {
     <>
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-brand-bg/50 backdrop-blur-xl border-b border-white/10' : 'bg-transparent'}`}>
         <nav className="container mx-auto px-6 py-6 flex justify-between items-center">
-          <a href="#hero" className="text-3xl font-bold text-brand-primary tracking-tighter" onClick={handleHomeClick}>
-            JW
+          <a href="#hero" className="text-4xl font-black tracking-tighter" onClick={handleHomeClick}>
+            <span className="text-brand-text">JW</span><span className="text-brand-primary">.</span>
           </a>
           
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-10">
             {navLinks.map((link) => (
-              <a key={link.href} href={link.href} onClick={handleNavClick} className="text-lg text-brand-text hover:text-brand-primary transition-colors duration-300 group">
+              <a key={link.href} href={link.href} onClick={handleNavClick} className="text-sm font-bold uppercase tracking-widest text-brand-text hover:text-brand-primary transition-colors duration-300 group">
                 {link.label}
-                <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-brand-primary"></span>
+                <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-brand-primary mt-1"></span>
               </a>
             ))}
           </div>
@@ -193,8 +330,8 @@ const Header: React.FC = () => {
       {/* Mobile Menu Overlay */}
       <div className={`fixed inset-0 z-[60] bg-brand-bg/70 backdrop-blur-2xl transition-transform duration-300 ease-in-out md:hidden ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="container mx-auto px-6 py-6 flex justify-between items-center">
-           <a href="#hero" className="text-3xl font-bold text-brand-primary tracking-tighter" onClick={handleHomeClick}>
-              JW
+           <a href="#hero" className="text-4xl font-black tracking-tighter" onClick={handleHomeClick}>
+              <span className="text-brand-text">JW</span><span className="text-brand-primary">.</span>
            </a>
            <button onClick={() => setIsMobileMenuOpen(false)} className="text-brand-text">
               <XIcon className="w-7 h-7"/>
@@ -202,7 +339,7 @@ const Header: React.FC = () => {
         </div>
         <div className="flex flex-col items-center justify-center h-[calc(100%-92px)] space-y-8">
             {navLinks.map((link) => (
-              <a key={link.href} href={link.href} onClick={handleNavClick} className="text-4xl font-semibold text-brand-text hover:text-brand-primary transition-colors duration-300">
+              <a key={link.href} href={link.href} onClick={handleNavClick} className="text-2xl font-black uppercase tracking-widest text-brand-text hover:text-brand-primary transition-colors duration-300">
                 {link.label}
               </a>
             ))}
@@ -400,14 +537,17 @@ const ContactSection: React.FC = () => {
   return (
     <section 
       id="contact" 
-      className="py-24 text-center"
+      className="py-32 text-center"
       ref={ref}
     >
-      <h2 className={`text-4xl md:text-5xl font-bold mb-4 transition-all duration-700 ease-in-out ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>{uiTexts.contactSection.title}</h2>
-      <div className={`w-16 h-1 bg-brand-primary mb-8 mx-auto transition-all duration-700 ease-in-out ${isVisible ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0'}`} style={{ transitionDelay: '200ms' }}></div>
-      <p className={`max-w-2xl mx-auto text-lg text-brand-text/80 mb-12 transition-opacity duration-700 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'}`} style={{ transitionDelay: '400ms' }}>
+      <h2 className={`text-6xl md:text-8xl font-black tracking-tighter mb-8 transition-all duration-700 ease-in-out ${isVisible ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}>
+        <span className="text-brand-text">LET'S WORK</span> <span className="text-brand-primary">TOGETHER</span>
+      </h2>
+      
+      <p className={`max-w-3xl mx-auto text-xl md:text-2xl text-brand-text/70 mb-16 transition-opacity duration-700 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'}`} style={{ transitionDelay: '400ms' }}>
         {uiTexts.contactSection.paragraph}
       </p>
+      
       <div className={`flex justify-center items-center space-x-6 transition-opacity duration-700 ease-in-out ${isVisible ? 'opacity-100' : 'opacity-0'}`} style={{ transitionDelay: '600ms' }}>
         <a href={`mailto:${contact.email}`} aria-label="Email" className="group">
           <div className="w-16 h-16 bg-white/5 backdrop-blur-lg border border-white/10 rounded-full flex items-center justify-center group-hover:bg-brand-primary/10 group-hover:border-brand-primary transition-all duration-300 transform group-hover:scale-110">
