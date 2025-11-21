@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { personalInfo, experiences, educationData, projects, skills, contact, uiTexts } from './constants';
 import type { Project, TimelineItemData } from './types';
-import { GithubIcon, LinkedinIcon, MailIcon, ArrowUpRightIcon, ChevronDownIcon, MenuIcon, XIcon } from './components/Icons';
+import { GithubIcon, LinkedinIcon, MailIcon, ArrowUpRightIcon, ChevronDownIcon, MenuIcon, XIcon, BoltIcon } from './components/Icons';
 
 // To keep the file count low, sub-components are defined here.
 // In a larger project, these would be in separate files.
@@ -571,7 +571,18 @@ const ContactSection: React.FC = () => {
 
 const Footer: React.FC = () => (
   <footer className="py-8 border-t border-brand-text/10">
-    <div className="container mx-auto px-6 flex justify-center items-center text-center">
+    <div className="container mx-auto px-6 flex flex-col justify-center items-center text-center">
+      {contact.buyMeACoffee && (
+        <a
+          href={contact.buyMeACoffee}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mb-6 flex items-center gap-2 px-6 py-3 bg-brand-primary/10 text-brand-primary hover:bg-brand-primary hover:text-brand-dark border border-brand-primary/50 rounded-full transition-all duration-300 font-bold tracking-widest text-sm uppercase group"
+        >
+          <BoltIcon className="w-5 h-5 group-hover:animate-pulse" />
+          <span>Donate to help my work</span>
+        </a>
+      )}
       <p className="text-brand-text/60 text-sm">&copy; {new Date().getFullYear()} {personalInfo.name}. {uiTexts.footer.copyrightText}</p>
     </div>
   </footer>

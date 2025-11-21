@@ -46,10 +46,10 @@ export const experiences: Experience[] = [
 export const projects: Project[] = [
   {
     title: "SuiReader",
-    description: "An Android mobile application that helps users check and manage their Japanese IC card balance and history using NFC. Designed with a minimalist, Wallet-inspired UI.",
-    tags: ["Kotlin", "Java", "Mobile Dev", "Figma"],
+    description: "An Android mobile application (with a website) that helps users check and manage their Japanese IC card balance and history using NFC. Designed with a minimalist, Wallet-inspired UI.",
+    tags: ["Kotlin", "Java", "Mobile Dev", "Figma", "React", "TypeScript"],
     imageUrl: "https://i.imgur.com/GGUmerD.png",
-    link: "#"
+    link: "https://suireader.jameswu.me/"
   },
   {
     title: "Task Management App",
@@ -96,6 +96,7 @@ export const contact: Contact = {
   email: "jameswu.techno@gmail.com",
   github: "https://github.com/jmdspeedy",
   linkedin: "https://www.linkedin.com/in/james-wu-4b6b54244/",
+  buyMeACoffee: "https://buymeacoffee.com/"
 };
 
 export const uiTexts: UITexts = {

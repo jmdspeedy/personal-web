@@ -38,6 +38,7 @@ export interface Contact {
   email: string;
   github: string;
   linkedin: string;
+  buyMeACoffee?: string;
 }
 
 // Kept for reusability of the Timeline component
